@@ -2,7 +2,7 @@ require_relative '../../src/Cromosoma.rb'
 require_relative '../../src/Gen.rb'
 
 Dado('un Cromosoma') do
-  @cromosoma = Cromosoma.new([Gen.new()])
+  @cromosoma = Cromosoma.new([Gen.new(), Gen.new()])
 end
 
 Entonces('es una lista de Genes') do 
@@ -10,16 +10,14 @@ Entonces('es una lista de Genes') do
 end
 
 Cuando('cuando muta un Gen') do 
- @gen  = Gen.new()
- @newCromosoma = @cromosoma.mutation(0,@gen)
+  @newCromosoma = @cromosoma.mutation
 end
 
 Entonces('genera un nuevo Cromosoma') do 
  expect(@newCromosoma).to be_instance_of(Cromosoma)
 end
 
-
-Y('el nuevo Cromosoma contiene al Gen mutado') do
- expect(@cromosoma.getGenes[0]).to eq(@gen)
+Entonces('ademas son diferentes') do 
+ expect(@newCromosoma).not_to eq(@cromosoma)
 end
-  
+

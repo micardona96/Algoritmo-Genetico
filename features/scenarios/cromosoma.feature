@@ -10,6 +10,6 @@ Escenario: Verificar que un Cromosoma pueda mutar
     Dado un Cromosoma
     Cuando cuando muta un Gen
     Entonces genera un nuevo Cromosoma
-    Y el nuevo Cromosoma contiene al Gen mutado
+    Y ademas son diferentes
 
 
