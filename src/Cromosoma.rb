@@ -8,7 +8,7 @@ class Cromosoma
       @genes = genes
   end
 
-  # devuelve una nueva lista de genes, se usara para crear un nuevo cromosoma
+  # retorna un nuevo Cromosoma con un gen mutado
   def mutation (genetic_index, gen)
    return Cromosoma.new(@genes[genetic_index] = gen)
   end

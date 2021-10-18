@@ -8,12 +8,13 @@ class Gen
       @alelo = rand(-10.0..10.0).round(2)
   end
 
+  # Hereda el alelo a al gen
   def inherit alelo
       @alelo = alelo
   end
 
   def getAlelo
-    return  @alelo
+    return @alelo
   end
 
 end
