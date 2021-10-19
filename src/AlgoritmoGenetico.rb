@@ -46,11 +46,23 @@ class AlgoritmoGenetico
       vectorR.each_with_index do |r, index|
         fitness += (r - @fenotipo.getVectorAs[index])**2
       end
-      #  !!! replace with no usage vector S !!!
-      # @fenotipo.getVectorS.each_with_index do |r, index|
-      #   fitness += (r - chromosome.getGenes[index].getAlelo)**2
-      # end
-      realFitness = Math.sqrt(fitness).round(0)
+      if fitness == 0
+        print chromosome.getGenes
+        exit
+      else
+        chromosome.setFitness(-fitness)
+      end
+    end
+  end
+
+  def evaluateFitnessByVectorMagnitude
+    @population.each do |chromosome|
+      fitness = 0
+      vectorR = @fenotipo.matrixXvector(@fenotipo.getMatrixA, chromosome.getGenesArray)
+      vectorR.each_with_index do |r, index|
+        fitness += (r - @fenotipo.getVectorAs[index])**2
+      end
+      realFitness = -Math.sqrt(fitness).round(0)
       if realFitness == 0
         print chromosome.getGenes
         exit
