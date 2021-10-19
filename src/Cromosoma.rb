@@ -5,19 +5,40 @@
 require_relative 'Gen.rb'
 
 class Cromosoma
-  def initialize(genes)
-    @genes = genes
+  def initialize(genesList)
+    @genes = genesList
+    @fitness = -999
   end
 
   # retorna un nuevo Cromosoma con un gen random mutado
   def mutation
-    newGenes = Array.new(@genes)
-    select_random_gen = rand(0...@genes.length)
-    newGenes[select_random_gen] = Gen.new
-    self.class.new(newGenes)
+    nuevosGenes = Array.new(@genes)
+    @genes.sample.inherit(Gen.new().getAlelo)
+    self.class.new(nuevosGenes)
+  end
+
+  # retorna un nuevo Cromosoma creado apartir de un Cruce uniforme con otro Cromosoma
+  def uniformCrossover(cromosoma)
+    genesPadre = Array.new(cromosoma.getGenes)
+    nuevosGenes = Array.new(@genes)
+    nuevosGenes.each_with_index do |_gen, index|
+      if %w[padre madre].sample == 'padre'
+        genPadre = genesPadre[index]
+        nuevosGenes[index].inherit(genPadre.getAlelo)
+      end
+    end
+    self.class.new(nuevosGenes)
   end
 
   def getGenes
     @genes
+  end
+
+  def setFitness(value)
+    @fitness = value
+  end
+
+  def getFitness
+    @fitness
   end
 end
