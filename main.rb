@@ -5,4 +5,4 @@
 
 require_relative './src/AlgoritmoGenetico.rb'
 
-AlgoritmoGenetico.new(populationSize=100, unknowns=3, generations=20000, matinPoolSize=20)
+AlgoritmoGenetico.new(populationSize=100, unknowns=3, generations=50000, matinPoolSize=50)

@@ -24,6 +24,20 @@ class Fenotipo
     @vectorAs
   end
 
+  # Crea un vector multiplicando una matrix por un vector
+  def matrixXvector(matrix, vector)
+    size = vector.length
+    vectorResult = []
+    (0...size).each do |i|
+      temp = 0
+      (0...size).each do |j|
+        temp += matrix[i][j] * vector[j]
+      end
+      vectorResult.push(temp)
+    end
+    vectorResult
+  end
+
   private
 
   # Crea una matriz con valores aleatorios
@@ -46,19 +60,5 @@ class Fenotipo
       vector[i] = rand(-10.0..10.0).round(0)
     end
     vector
-  end
-
-  # Crea un vector multiplicando una matrix por un vector
-  def matrixXvector(matrix, vector)
-    size = vector.length
-    vectorResult = []
-    (0...size).each do |i|
-      temp = 0
-      (0...size).each do |j|
-        temp += matrix[i][j] * vector[j]
-      end
-      vectorResult.push(temp)
-    end
-    vectorResult
   end
 end

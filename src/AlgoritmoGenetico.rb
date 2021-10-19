@@ -24,7 +24,7 @@ class AlgoritmoGenetico
       winners = selectionByTournament(matinPoolSize)
       @population = createNewGeneration(populationSize, winners)
     end
-    print "sin respuesta"
+    print 'sin respuesta'
   end
 
   def startingPopulation(populationSize, unknownsAmount)
@@ -42,15 +42,21 @@ class AlgoritmoGenetico
   def evaluateFitnessBySquareError
     @population.each do |chromosome|
       fitness = 0
-      @fenotipo.getVectorS.each_with_index do |r, index|
-        fitness += (r - chromosome.getGenes[index].getAlelo)**2
+      vectorR = @fenotipo.matrixXvector(@fenotipo.getMatrixA, chromosome.getGenesArray)
+      vectorR.each_with_index do |r, index|
+        fitness += (r - @fenotipo.getVectorAs[index])**2
       end
-      if (-Math.sqrt(fitness).round(0) == 0)
-        print "Chromosome OP: "
+      #  !!! replace with no usage vector S !!!
+      # @fenotipo.getVectorS.each_with_index do |r, index|
+      #   fitness += (r - chromosome.getGenes[index].getAlelo)**2
+      # end
+      realFitness = Math.sqrt(fitness).round(0)
+      if realFitness == 0
         print chromosome.getGenes
         exit
+      else
+        chromosome.setFitness(realFitness)
       end
-      chromosome.setFitness(-Math.sqrt(fitness).round(0))
     end
   end
 

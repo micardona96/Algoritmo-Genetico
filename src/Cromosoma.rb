@@ -13,7 +13,7 @@ class Cromosoma
   # retorna un nuevo Cromosoma con un gen random mutado
   def mutation
     nuevosGenes = Array.new(@genes)
-    @genes.sample.inherit(Gen.new().getAlelo)
+    @genes.sample.inherit(Gen.new.getAlelo)
     self.class.new(nuevosGenes)
   end
 
@@ -32,6 +32,10 @@ class Cromosoma
 
   def getGenes
     @genes
+  end
+
+  def getGenesArray
+    @genes.map { |gen| gen.getAlelo }
   end
 
   def setFitness(value)
