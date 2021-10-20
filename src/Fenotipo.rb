@@ -9,7 +9,7 @@ class Fenotipo
   def initialize(size)
     @matrixA = createMatrix(size)
     @vectorS = createVector(size)
-    @vectorAs = matrixXvector(@matrixA, @vectorS)
+    @vectorAs = Fenotipo.matrixXvector(@matrixA, @vectorS)
   end
 
   def getMatrixA
@@ -25,7 +25,7 @@ class Fenotipo
   end
 
   # Crea un vector multiplicando una matrix por un vector
-  def matrixXvector(matrix, vector)
+  def self.matrixXvector(matrix, vector)
     size = vector.length
     vectorResult = []
     (0...size).each do |i|

@@ -14,12 +14,27 @@ class AlgoritmoGenetico
     starEvolution(populationSize, generations, matinPoolSize, unknownsAmount, fitnessFunction)
   end
 
+  def self.selectionByTournament(matinPoolSize, population)
+    winners = []
+    (1..matinPoolSize).each do
+      c1 = population.sample
+      c2 = population.sample
+      if c1.getFitness > c2.getFitness
+        winners.push(c1)
+        population.delete(c2)
+      else
+        winners.push(c2)
+        population.delete(c1)
+      end
+    end
+    winners
+  end
+
   private
 
   def starEvolution(populationSize, generations, matinPoolSize, unknownsAmount, fitnessFunction)
     @population = startingPopulation(populationSize, unknownsAmount)
     (1..generations).each do
-      # agregamos la aptitud a los cromosomas DEFAULT SQUARE
       case fitnessFunction
       when 'SQUARE'
         evaluateFitnessBySquareError
@@ -30,9 +45,7 @@ class AlgoritmoGenetico
       else
         evaluateFitnessBySquareError
       end
-
-      # Seleccion por Torneo
-      winners = selectionByTournament(matinPoolSize)
+      winners = AlgoritmoGenetico.selectionByTournament(matinPoolSize, @population)
       @population = createNewGeneration(populationSize, winners)
     end
     print 'sin respuesta'
@@ -53,12 +66,16 @@ class AlgoritmoGenetico
   def evaluateFitnessBySquareError
     @population.each do |chromosome|
       fitness = 0
-      vectorR = @fenotipo.matrixXvector(@fenotipo.getMatrixA, chromosome.getGenesArray)
+      vectorR = Fenotipo.matrixXvector(@fenotipo.getMatrixA, chromosome.getGenesArray)
       vectorR.each_with_index do |r, index|
         fitness += (r - @fenotipo.getVectorAs[index])**2
       end
       if fitness == 0
-        puts chromosome.getGenes
+        print 'Matrix A: ', @fenotipo.getMatrixA
+        puts ' '
+        print 'Chromosome: ', chromosome.getGenesArray
+        puts ''
+        print 'Vector B: ', @fenotipo.getVectorAs
         exit
       else
         chromosome.setFitness(-fitness)
@@ -69,7 +86,7 @@ class AlgoritmoGenetico
   def evaluateFitnessByVectorMagnitude
     @population.each do |chromosome|
       fitness = 0
-      vectorR = @fenotipo.matrixXvector(@fenotipo.getMatrixA, chromosome.getGenesArray)
+      vectorR = Fenotipo.matrixXvector(@fenotipo.getMatrixA, chromosome.getGenesArray)
       vectorR.each_with_index do |r, index|
         fitness += (r - @fenotipo.getVectorAs[index])**2
       end
@@ -86,7 +103,7 @@ class AlgoritmoGenetico
   def evaluateFitnessByDiversity
     @population.each do |chromosome|
       fitness = 0
-      vectorR = @fenotipo.matrixXvector(@fenotipo.getMatrixA, chromosome.getGenesArray)
+      vectorR = Fenotipo.matrixXvector(@fenotipo.getMatrixA, chromosome.getGenesArray)
       vectorR.each_with_index do |_r, _index|
         # CHANGE FUNCTION VALIDATION By Diversity
         fitness += rand(1..100)
@@ -98,16 +115,6 @@ class AlgoritmoGenetico
         chromosome.setFitness(fitness)
       end
     end
-  end
-
-  def selectionByTournament(matinPoolSize)
-    winners = []
-    (1..matinPoolSize).each do
-      c1 = @population.sample
-      c2 = @population.sample
-      winners.push(c1.getFitness > c2.getFitness ? c1 : c2)
-    end
-    winners
   end
 
   def createNewGeneration(populationSize, winners)
