@@ -13,7 +13,8 @@ class Cromosoma
   # retorna un nuevo Cromosoma con un gen random mutado
   def mutation
     nuevosGenes = Array.new(@genes)
-    @genes.sample.inherit(Gen.new.getAlelo)
+    nuevoGen = Gen.new
+    nuevosGenes[rand(nuevosGenes.length)] = nuevoGen
     self.class.new(nuevosGenes)
   end
 

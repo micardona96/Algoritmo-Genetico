@@ -8,4 +8,4 @@ require_relative './src/AlgoritmoGenetico.rb'
 FitnessFunction = Struct.new(:square, :magnitude, :diversity)
 fitnessFunction = FitnessFunction.new('SQUARE', 'MAGNITUDE', 'DIVERSITY')
 
-AlgoritmoGenetico.new(populationSize = 100, unknowns = 3, generations = 10000, matinPoolSize = 50, fitnessFunction.square)
+AlgoritmoGenetico.new(populationSize = 100, unknowns = 5, generations = 5000, fitnessFunction.square)

@@ -7,7 +7,8 @@ require_relative 'Fenotipo.rb'
 require_relative 'Gen.rb'
 
 class AlgoritmoGenetico
-  def initialize(populationSize, unknownsAmount, generations, matinPoolSize, fitnessFunction)
+  def initialize(populationSize, unknownsAmount, generations, fitnessFunction)
+    matinPoolSize = (populationSize * 0.2).ceil
     @population = []
     @fenotipo = Fenotipo.new(unknownsAmount)
     typefitnessFunction(fitnessFunction)
@@ -46,6 +47,8 @@ class AlgoritmoGenetico
         evaluateFitnessBySquareError
       end
       winners = AlgoritmoGenetico.selectionByTournament(matinPoolSize, @population)
+      # print @population.map { |x| x.getFitness }.max
+      # puts
       @population = createNewGeneration(populationSize, winners)
     end
     print 'sin respuesta'
@@ -53,11 +56,11 @@ class AlgoritmoGenetico
 
   def startingPopulation(populationSize, unknownsAmount)
     populationArray = []
-    list = []
-    (0...unknownsAmount).each do |_index|
-      list.push(Gen.new)
-    end
     (1..populationSize).each do
+      list = []
+      (0...unknownsAmount).each do |_index|
+        list.push(Gen.new)
+      end
       populationArray.push(Cromosoma.new(list))
     end
     populationArray
@@ -92,7 +95,11 @@ class AlgoritmoGenetico
       end
       realFitness = -Math.sqrt(fitness).round(0)
       if realFitness == 0
-        puts chromosome.getGenes
+        print 'Matrix A: ', @fenotipo.getMatrixA
+        puts ' '
+        print 'Chromosome: ', chromosome.getGenesArray
+        puts ''
+        print 'Vector B: ', @fenotipo.getVectorAs
         exit
       else
         chromosome.setFitness(realFitness)
@@ -109,7 +116,11 @@ class AlgoritmoGenetico
         fitness += rand(1..100)
       end
       if fitness == 0
-        puts chromosome.getGenes
+        print 'Matrix A: ', @fenotipo.getMatrixA
+        puts ' '
+        print 'Chromosome: ', chromosome.getGenesArray
+        puts ''
+        print 'Vector B: ', @fenotipo.getVectorAs
         exit
       else
         chromosome.setFitness(fitness)
@@ -121,8 +132,11 @@ class AlgoritmoGenetico
     newPopulation = []
     (1..populationSize).each do
       c1 = winners.sample
+      # winners.delete(c1)
       c2 = winners.sample
-      newPopulation.push(c1.uniformCrossover(c2).mutation)
+      newCromosoma = c1.uniformCrossover(c2).mutation
+      # winners.push(c1)
+      newPopulation.push(newCromosoma)
     end
     newPopulation
   end
