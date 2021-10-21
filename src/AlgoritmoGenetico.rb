@@ -15,11 +15,13 @@ class AlgoritmoGenetico
     starEvolution(populationSize, generations, matinPoolSize, unknownsAmount, fitnessFunction)
   end
 
-  def self.selectionByTournament(matinPoolSize, population)
+  def self.selectionByTournament(matinPoolSize, populationArray)
+    population = Array.new(populationArray)
     winners = []
     (1..matinPoolSize).each do
-      c1 = population.sample
-      c2 = population.sample
+      samples = population.sample(2)
+      c1 = samples[0]
+      c2 = samples[1]
       if c1.getFitness > c2.getFitness
         winners.push(c1)
         population.delete(c2)
@@ -35,7 +37,7 @@ class AlgoritmoGenetico
 
   def starEvolution(populationSize, generations, matinPoolSize, unknownsAmount, fitnessFunction)
     @population = startingPopulation(populationSize, unknownsAmount)
-    (1..generations).each do
+    (1..generations).each do |generation|
       case fitnessFunction
       when 'SQUARE'
         evaluateFitnessBySquareError
@@ -47,8 +49,8 @@ class AlgoritmoGenetico
         evaluateFitnessBySquareError
       end
       winners = AlgoritmoGenetico.selectionByTournament(matinPoolSize, @population)
-      # print @population.map { |x| x.getFitness }.max
-      # puts
+      print 'Better Fitness in Gen ', generation, ': ', @population.map { |x| x.getFitness }.max
+      puts
       @population = createNewGeneration(populationSize, winners)
     end
     print 'sin respuesta'
@@ -56,7 +58,7 @@ class AlgoritmoGenetico
 
   def startingPopulation(populationSize, unknownsAmount)
     populationArray = []
-    (1..populationSize).each do
+    (-1..populationSize).each do
       list = []
       (0...unknownsAmount).each do |_index|
         list.push(Gen.new)
@@ -128,15 +130,15 @@ class AlgoritmoGenetico
     end
   end
 
-  def createNewGeneration(populationSize, winners)
+  def createNewGeneration(populationSize, populationWinner)
+    winners = Array.new(populationWinner)
     newPopulation = []
-    (1..populationSize).each do
-      c1 = winners.sample
-      # winners.delete(c1)
-      c2 = winners.sample
-      newCromosoma = c1.uniformCrossover(c2).mutation
-      # winners.push(c1)
-      newPopulation.push(newCromosoma)
+    while newPopulation.length < populationSize
+      samples = winners.sample(2)
+      c1 = samples[0]
+      c2 = samples[1]
+      newChild = c1.uniformCrossover(c2).mutation
+      newPopulation.push(newChild)
     end
     newPopulation
   end
