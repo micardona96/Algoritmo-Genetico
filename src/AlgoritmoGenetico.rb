@@ -8,7 +8,7 @@ require_relative 'Gen.rb'
 
 class AlgoritmoGenetico
   def initialize(populationSize, unknownsAmount, generations, fitnessFunction)
-    matinPoolSize = (populationSize * 0.2).ceil
+    matinPoolSize = (populationSize * 0.3).ceil
     @population = []
     @fenotipo = Fenotipo.new(unknownsAmount)
     typefitnessFunction(fitnessFunction)
