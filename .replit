@@ -1,3 +1,2 @@
-runCucumber="bundle exec cucumber"
-run="bundle exec ruby main.rb"
+run="bundle exec cucumber && ruby main.rb"
 language="ruby"

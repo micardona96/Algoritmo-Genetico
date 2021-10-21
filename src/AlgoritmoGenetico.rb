@@ -76,10 +76,13 @@ class AlgoritmoGenetico
         fitness += (r - @fenotipo.getVectorAs[index])**2
       end
       if fitness == 0
+        puts
+        print 'Successful !!!'
+        puts
         print 'Matrix A: ', @fenotipo.getMatrixA
-        puts ' '
+        puts
         print 'Chromosome: ', chromosome.getGenesArray
-        puts ''
+        puts
         print 'Vector B: ', @fenotipo.getVectorAs
         exit
       else
@@ -97,10 +100,13 @@ class AlgoritmoGenetico
       end
       realFitness = -Math.sqrt(fitness).round(0)
       if realFitness == 0
+        puts
+        print 'Successful !!!'
+        puts
         print 'Matrix A: ', @fenotipo.getMatrixA
-        puts ' '
+        puts
         print 'Chromosome: ', chromosome.getGenesArray
-        puts ''
+        puts
         print 'Vector B: ', @fenotipo.getVectorAs
         exit
       else
@@ -118,10 +124,13 @@ class AlgoritmoGenetico
         fitness += rand(1..100)
       end
       if fitness == 0
+        puts
+        print 'Successful !!!'
+        puts
         print 'Matrix A: ', @fenotipo.getMatrixA
-        puts ' '
+        puts
         print 'Chromosome: ', chromosome.getGenesArray
-        puts ''
+        puts
         print 'Vector B: ', @fenotipo.getVectorAs
         exit
       else
