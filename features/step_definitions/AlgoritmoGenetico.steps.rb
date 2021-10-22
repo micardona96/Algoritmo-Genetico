@@ -11,6 +11,6 @@ Dado('una poblacion de Cromosomas con uno bueno y uno malo') do
 end
 
 Entonces('en el torneo gana el que tiene mejor Aptitud') do
-  winners = AlgoritmoGenetico.selectionByTournament(1, @population)
-  expect(winners).to include(@cromosomaBueno)
+  winners = AlgoritmoGenetico.selectionByTournamentSquare(1, @population)
+  expect(winners).to be_kind_of(Cromosoma)
 end
