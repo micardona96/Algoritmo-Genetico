@@ -13,7 +13,6 @@ siguiendo una metodología de desarrollo ágil basada en pruebas (Cucumber), y a
 un problema fácil parametrizado según el tamaño del problema N. Concretamente hay que resolver un
 sistema de N ecuaciones y N incógnitas: Ac = B
  
- ![alt text](assets/prob1.png)
 
 A partir de unos valores concretos de A y B, el algoritmo genético debe encontrar el vector c que los
 satisfaga. Es decir, c es el cromosoma.
