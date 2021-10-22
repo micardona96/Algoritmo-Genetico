@@ -142,8 +142,16 @@ class AlgoritmoGenetico
       vectorS.each_with_index do |r, index|
         fitness += (r - chromosomeArray[index])**2
       end
-      realFitness = -Math.sqrt(fitness)
-      if realFitness == 0
+      t2 = Time.now()
+      time= (t2-@t1)* 1000.0
+      if time >= 30000
+        puts
+        print 'Time execution finish !!!'
+        puts
+        puts "Tiempo de ejecucion en milisengudos #{time}"
+        exit
+      end
+      if fitness == 0
         puts
         print 'Successful !!!'
         puts
@@ -153,12 +161,11 @@ class AlgoritmoGenetico
         puts
         print 'Vector B: ', @fenotipo.getVectorAs
         puts
-        t2 = Time.now()
-        time= (t2-@t1)* 1000.0
+
         puts "Tiempo de ejecucion en milisengudos #{time}"
         exit
       else
-        chromosome.setFitness(realFitness)
+        chromosome.setFitness(-fitness)
       end
     end
   end
