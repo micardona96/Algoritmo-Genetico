@@ -8,14 +8,14 @@ require_relative 'Gen.rb'
 
 class AlgoritmoGenetico
   def initialize(populationSize, unknownsAmount, generations, fitnessFunction)
+    @t1 = Time.now()
     matinPoolSize = (populationSize * 0.3).ceil
-    @population = []
+    @population = Array.new(populationSize)
     @fenotipo = Fenotipo.new(unknownsAmount)
-    typefitnessFunction(fitnessFunction)
     starEvolution(populationSize, generations, matinPoolSize, unknownsAmount, fitnessFunction)
   end
 
-  def self.selectionByTournament(matinPoolSize, populationArray)
+  def self.selectionByTournamentSquareAndDiversity(matinPoolSize, populationArray)
     population = Array.new(populationArray)
     winners = []
     (1..matinPoolSize).each do
@@ -35,23 +35,89 @@ class AlgoritmoGenetico
 
   private
 
+  def self.selectionByTournamentSquare(matinPoolSize, populationArray)
+    population = Array.new(populationArray)
+    matinPool = []
+    winner = nil
+    for x in 0..matinPoolSize #Cuanto % de individuos se escoge para competir, variar para observar resultados
+      matinPool.push population[rand(populationArray.length)]
+    end
+    listFitnes = matinPool.map {|c| c.getFitness }
+    maxIndex = listFitnes.index(listFitnes.max)
+    winner = matinPool[maxIndex]
+    return winner
+  end
+
+  private
+
+  def self.selectionByTournamentDiversity(matinPoolSize, populationArray)
+    population = Array.new(populationArray)
+    matinPool = []
+    winner = nil
+    distances_from_others = []
+    for x in 0..4 #se escogen 5 cromosomas, de cada 1 el resto son su vecinos (4)
+        matinPool.push population[rand(populationArray.length)]
+        distances_from_others.push 0
+    end
+    for z in 0..4 #para cada 1 de los 5 cromosomas...
+        for w in 0..4 #se le compara con sus 4 vecinos...
+            if (z != w) #que no son él mismo, naturalmente
+                distances_from_others[z] += ((matinPool[z].getFitness - matinPool[w].getFitness) ** 2)
+            end
+        end
+    end
+    sort_distances = distances_from_others.sort
+    for x in 0..4
+        if (sort_distances[4]==distances_from_others[x])
+            return matinPool[x]
+        end
+    end
+  end
+
+  private
+
   def starEvolution(populationSize, generations, matinPoolSize, unknownsAmount, fitnessFunction)
     @population = startingPopulation(populationSize, unknownsAmount)
     (1..generations).each do |generation|
+      newPopulation = []
+      evaluateFitnessBySquareError
       case fitnessFunction
       when 'SQUARE'
-        evaluateFitnessBySquareError
-      when 'MAGNITUDE'
-        evaluateFitnessByVectorMagnitude
+        for c in 0..populationSize
+          winner1 = AlgoritmoGenetico.selectionByTournamentSquare(matinPoolSize, @population)
+          winner2 = AlgoritmoGenetico.selectionByTournamentSquare(matinPoolSize, @population)
+          child1 = winner1.uniformCrossover(winner2).mutation
+          child2 = winner2.uniformCrossover(winner1).mutation
+          if child1.getFitness > child2.getFitness
+            newPopulation.push(child1)
+          else
+            newPopulation.push(child2)
+          end
+        end
+        print 'Better Fitness in Gen ', generation, ': ', @population.map { |x| x.getFitness }.max
+        puts
+        @population = newPopulation
       when 'DIVERSITY'
-        evaluateFitnessByDiversity
-      else
-        evaluateFitnessBySquareError
+        for c in 0..populationSize
+          winner1 = AlgoritmoGenetico.selectionByTournamentDiversity(matinPoolSize, @population)
+          winner2 = AlgoritmoGenetico.selectionByTournamentDiversity(matinPoolSize, @population)
+          child1 = winner1.uniformCrossover(winner2).mutation
+          child2 = winner2.uniformCrossover(winner1).mutation
+          if child1.getFitness > child2.getFitness
+            newPopulation.push(child1)
+          else
+            newPopulation.push(child2)
+          end
+        end
+        print 'Better Fitness in Gen ', generation, ': ', @population.map { |x| x.getFitness }.max
+        puts
+        @population = newPopulation
+      when 'DIVERSITY AND SQUARE'
+        winners = AlgoritmoGenetico.selectionByTournamentSquareAndDiversity(matinPoolSize, @population)
+        print 'Better Fitness in Gen ', generation, ': ', @population.map { |x| x.getFitness }.max
+        puts
+        @population = createNewGeneration(populationSize, winners)
       end
-      winners = AlgoritmoGenetico.selectionByTournament(matinPoolSize, @population)
-      print 'Better Fitness in Gen ', generation, ': ', @population.map { |x| x.getFitness }.max
-      puts
-      @population = createNewGeneration(populationSize, winners)
     end
     print 'sin respuesta'
   end
@@ -71,34 +137,12 @@ class AlgoritmoGenetico
   def evaluateFitnessBySquareError
     @population.each do |chromosome|
       fitness = 0
-      vectorR = Fenotipo.matrixXvector(@fenotipo.getMatrixA, chromosome.getGenesArray)
-      vectorR.each_with_index do |r, index|
-        fitness += (r - @fenotipo.getVectorAs[index])**2
+      vectorS = @fenotipo.getVectorS
+      chromosomeArray = chromosome.getGenesArray
+      vectorS.each_with_index do |r, index|
+        fitness += (r - chromosomeArray[index])**2
       end
-      if fitness == 0
-        puts
-        print 'Successful !!!'
-        puts
-        print 'Matrix A: ', @fenotipo.getMatrixA
-        puts
-        print 'Chromosome: ', chromosome.getGenesArray
-        puts
-        print 'Vector B: ', @fenotipo.getVectorAs
-        exit
-      else
-        chromosome.setFitness(-fitness)
-      end
-    end
-  end
-
-  def evaluateFitnessByVectorMagnitude
-    @population.each do |chromosome|
-      fitness = 0
-      vectorR = Fenotipo.matrixXvector(@fenotipo.getMatrixA, chromosome.getGenesArray)
-      vectorR.each_with_index do |r, index|
-        fitness += (r - @fenotipo.getVectorAs[index])**2
-      end
-      realFitness = -Math.sqrt(fitness).round(0)
+      realFitness = -Math.sqrt(fitness)
       if realFitness == 0
         puts
         print 'Successful !!!'
@@ -108,33 +152,13 @@ class AlgoritmoGenetico
         print 'Chromosome: ', chromosome.getGenesArray
         puts
         print 'Vector B: ', @fenotipo.getVectorAs
+        puts
+        t2 = Time.now()
+        time= (t2-@t1)* 1000.0
+        puts "Tiempo de ejecucion en milisengudos #{time}"
         exit
       else
         chromosome.setFitness(realFitness)
-      end
-    end
-  end
-
-  def evaluateFitnessByDiversity
-    @population.each do |chromosome|
-      fitness = 0
-      vectorR = Fenotipo.matrixXvector(@fenotipo.getMatrixA, chromosome.getGenesArray)
-      vectorR.each_with_index do |_r, _index|
-        # CHANGE FUNCTION VALIDATION By Diversity
-        fitness += rand(1..100)
-      end
-      if fitness == 0
-        puts
-        print 'Successful !!!'
-        puts
-        print 'Matrix A: ', @fenotipo.getMatrixA
-        puts
-        print 'Chromosome: ', chromosome.getGenesArray
-        puts
-        print 'Vector B: ', @fenotipo.getVectorAs
-        exit
-      else
-        chromosome.setFitness(fitness)
       end
     end
   end
@@ -150,18 +174,5 @@ class AlgoritmoGenetico
       newPopulation.push(newChild)
     end
     newPopulation
-  end
-
-  def typefitnessFunction(fitnessFunction)
-    case fitnessFunction
-    when 'SQUARE'
-      puts 'fitness function SquareError: '
-    when 'MAGNITUDE'
-      puts 'fitness function Vector Magnitude: '
-    when 'DIVERSITY'
-      puts 'fitness function Diversity: '
-    else
-      puts 'fitness function SquareError: '
-    end
   end
 end

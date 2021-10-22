@@ -25,7 +25,7 @@ class Cromosoma
     nuevosGenes.each_with_index do |_gen, index|
       if %w[padre madre].sample == 'padre'
         genPadre = genesPadre[index]
-        nuevosGenes[index].inherit(genPadre.getAlelo)
+        nuevosGenes[index] = genPadre
       end
     end
     self.class.new(nuevosGenes)

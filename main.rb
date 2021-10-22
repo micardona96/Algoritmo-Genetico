@@ -5,7 +5,22 @@
 
 require_relative './src/AlgoritmoGenetico.rb'
 
-FitnessFunction = Struct.new(:square, :magnitude, :diversity)
-fitnessFunction = FitnessFunction.new('SQUARE', 'MAGNITUDE', 'DIVERSITY')
+MethodFunction = Struct.new(:square, :diversity, :diversity_and_square)
+methodFunction = MethodFunction.new('SQUARE', 'DIVERSITY', 'DIVERSITY AND SQUARE')
 
-AlgoritmoGenetico.new(populationSize = 100, unknowns = 4, generations = 5000, fitnessFunction.square)
+puts "Seleccione un metodo:"
+puts "1:(square)"
+puts "2:(diversity)"
+puts "3:(diversity_and_square)"
+methodChoosen = gets.chomp
+case methodChoosen
+when "1"
+    method = methodFunction.square
+when "2"
+    method = methodFunction.diversity
+when "3"
+    method = methodFunction.diversity_and_square
+end
+puts "Seleccione cantidad de ecuaciones e incognitas"
+n = gets.chomp
+AlgoritmoGenetico.new(populationSize = 100, unknowns = n.to_i, generations = 5000, method)
